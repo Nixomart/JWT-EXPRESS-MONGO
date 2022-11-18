@@ -13,8 +13,8 @@ export const singup = async (req, res) => {
   });
 
   if (roles){
-    const foundRoles = await Role.find({name: {$in: roles}})
-    newUser.roles = foundRoles.map(role => role._id)
+    const RoleFound = await Role.find({name: {$in: roles}})
+    newUser.roles = RoleFound.map(role => role._id)
   }else{
     const role = await Role.findOne({name: "user"})
     newUser.roles = [role._id]
@@ -34,5 +34,21 @@ export const singup = async (req, res) => {
 };
 
 export const singin = async (req, res) => {
-  res.json("signin");
+
+  //we look the user and with populate fuction we show the roles with de user atribute "roles"
+  const userFound = await User.findOne({email: req.body.email}).populate("roles")
+  
+  if (!userFound) return res.status(400).json({message: 'user not found'})
+  
+  //we compare the password in the body with the user password
+  const passwordCompare = await User.comparePassword(req.body.password, userFound.password)
+  if(!passwordCompare) return res.status(401).json({token: null, message: 'invalid password'})
+
+  //after find user we create a token with jwt and return it
+  const token = jwt.sign({id:userFound._id}, config.SECRET, {
+    expiresIn: 86400
+  })
+
+  console.log('userFound', userFound)
+  res.json({token})
 };
