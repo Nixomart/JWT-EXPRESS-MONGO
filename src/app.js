@@ -3,8 +3,10 @@ import morgan from 'morgan'
 import productRoutes from './routes/products.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import './databse.js'
+import { createRoles } from './libs/initialSetup.js'
 
 const app = express()
+createRoles()
 
 app.use(morgan('dev'))
 app.use(express.json())
