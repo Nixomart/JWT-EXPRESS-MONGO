@@ -1,3 +1,5 @@
-import { verifyToken } from "./auth.jwt.js";
+import * as authJwt from "./auth.jwt.js";
+import * as verifySingup from '../middlewares/verifySignup.js'
 
-export {verifyToken}
+
+export {authJwt, verifySingup}
